@@ -1,0 +1,3 @@
+[submodule "fluent-plugin-elasticsearch"]
+	path = fluent-plugin-elasticsearch
+	url = git@github.com:illuminateeducation/fluent-plugin-elasticsearch.git

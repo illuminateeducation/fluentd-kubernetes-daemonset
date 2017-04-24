@@ -1,3 +1,5 @@
+# ONLY MAINTAINING THIS FORK UNTIL https://github.com/fluent/fluentd-kubernetes-daemonset IS UPDATED TO v0.14
+
 Fluentd Daemonset for Kubernetes
 ====================
 

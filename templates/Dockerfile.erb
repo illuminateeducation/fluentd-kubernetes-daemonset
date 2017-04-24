@@ -10,6 +10,8 @@ USER root
 WORKDIR /home/fluent
 ENV PATH /home/fluent/.gem/ruby/2.3.0/bin:$PATH
 
+COPY fluent-plugin-elasticsearch/fluent-plugin-elasticsearch-0.gem /tmp/
+
 RUN set -ex \
     && apk add --no-cache --virtual .build-deps \
         build-base \
@@ -19,7 +21,8 @@ RUN set -ex \
     && gem install fluent-plugin-record-reformer \
 <% case target
     when "elasticsearch"%>
-    && gem install fluent-plugin-elasticsearch \
+    <%# && gem install fluent-plugin-elasticsearch \ %>
+    && cd /tmp && gem install fluent-plugin-elasticsearch-0.gem \
 <%  when "logentries"%>
     # && gem install fluent-plugin-logentries \
 <%  when "loggly"%>
@@ -27,6 +30,7 @@ RUN set -ex \
 <%  when "cloudwatch"%>
     && gem install fluent-plugin-cloudwatch-logs -v 0.3.3 \
 <% end%>
+    && gem install fluent-plugin-kubernetes \
     && gem install fluent-plugin-kubernetes_metadata_filter \
     && apk del .build-deps \
     && rm -rf /tmp/* /var/tmp/* /usr/lib/ruby/gems/*/cache/*.gem
@@ -48,4 +52,17 @@ ENV FLUENTD_CONF="fluent.conf"
 #ENV LD_PRELOAD="/usr/lib/libjemalloc.so.2"
 
 # Run Fluentd
-CMD exec fluentd -c /fluentd/etc/$FLUENTD_CONF -p /fluentd/plugins $FLUENTD_OPT
+CMD exec fluentd -c /fluentd/etc/$FLUENTD_CONF \
+-p /fluentd/plugins \
+-p /fluentd/plugins/shared \
+<% case target
+    when "elasticsearch"%>
+-p /fluentd/plugins/elasticsearch \
+<%  when "logentries"%>
+-p /fluentd/plugins/logentries \
+<%  when "loggly"%>
+-p /fluentd/plugins/loggly \
+<%  when "cloudwatch"%>
+-p /fluentd/plugins/cloudwatch \
+<% end%>
+$FLUENTD_OPT

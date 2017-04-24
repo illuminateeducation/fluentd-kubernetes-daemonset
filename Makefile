@@ -10,12 +10,16 @@
 # It's still possible to build, tag and push images manually. Just use:
 #	make release-all
 
-IMAGE_NAME := fluent/fluentd-kubernetes
+IMAGE_NAME := quay.io/illuminateeducation/fluentd-kubernetes-daemonset
 ALL_IMAGES := \
-	v0.12/elasticsearch:v0.12.33-elasticsearch,v0.12-elasticsearch,stable-elasticsearch,elasticsearch \
-	v0.12/loggly:v0.12.33-loggly,v0.12-loggly,stable-loggly,loggly \
-	v0.12/logentries:v0.12.33-logentries,v0.12-logentries,stable-logentries,logentries \
-	v0.12/cloudwatch:v0.12.33-cloudwatch,v0.12-cloudwatch,stable-cloudwatch,cloudwatch
+	v0.14/elasticsearch:v0.14.15-elasticsearch,v0.14-elasticsearch,stable-elasticsearch,elasticsearch \
+	v0.14/loggly:v0.14.15-loggly,v0.14-loggly,stable-loggly,loggly \
+	v0.14/logentries:v0.14.15-logentries,v0.14-logentries,stable-logentries,logentries \
+	v0.14/cloudwatch:v0.14.15-cloudwatch,v0.14-cloudwatch,stable-cloudwatch,cloudwatch \
+	v0.12/elasticsearch:v0.12.35-elasticsearch,v0.12-elasticsearch,stable-elasticsearch,elasticsearch \
+	v0.12/loggly:v0.12.35-loggly,v0.12-loggly,stable-loggly,loggly \
+	v0.12/logentries:v0.12.35-logentries,v0.12-logentries,stable-logentries,logentries \
+	v0.12/cloudwatch:v0.12.35-cloudwatch,v0.12-cloudwatch,stable-cloudwatch,cloudwatch
 #	<Dockerfile>:<version>,<tag1>,<tag2>,...
 
 # Default is first image from ALL_IMAGES list.
@@ -32,6 +36,9 @@ space := $(empty) $(empty)
 eq = $(if $(or $(1),$(2)),$(and $(findstring $(1),$(2)),\
                                 $(findstring $(2),$(1))),1)
 
+fluent-plugin-elasticsearch-0.gem:
+	cd fluent-plugin-elasticsearch && gem build fluent-plugin-elasticsearch.gemspec
+
 ## Docker image management
 
 # Build Docker image.
@@ -41,7 +48,7 @@ eq = $(if $(or $(1),$(2)),$(and $(findstring $(1),$(2)),\
 
 no-cache-arg = $(if $(call eq, $(no-cache), yes), --no-cache, $(empty))
 
-image:
+image: fluent-plugin-elasticsearch-0.gem
 	docker build $(no-cache-arg) -t $(IMAGE_NAME):$(VERSION) docker-image/$(DOCKERFILE)
 
 # Tag Docker image with given tags.

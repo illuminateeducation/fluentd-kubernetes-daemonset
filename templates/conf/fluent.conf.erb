@@ -7,8 +7,8 @@
 <% case target
     when "elasticsearch"%>
 <match **>
-   type elasticsearch
-   log_level info
+   @type elasticsearch
+   @log_level info
    include_tag_key true
    host "#{ENV['FLUENT_ELASTICSEARCH_HOST']}"
    port "#{ENV['FLUENT_ELASTICSEARCH_PORT']}"
@@ -22,7 +22,7 @@
 </match>
 <%  when "logentries"%>
 <match **>
-   type logentries
+   @type logentries
    use_json true
    tag_access_log stdout
    tag_error_log stderr
@@ -30,13 +30,13 @@
 </match>
 <%  when "loggly"%>
 <match **>
-   type loggly
-   log_level info
+   @type loggly
+   @log_level info
    loggly_url "https://logs-01.loggly.com/inputs/#{ENV['LOGGLY_TOKEN']}/tag/fluentd"
 </match>
 <%  when "cloudwatch"%>
 <match **>
-  type cloudwatch_logs
+  @type cloudwatch_logs
   log_group_name "#{ENV['LOG_GROUP_NAME']}"
   auto_create_stream true
   use_tag_as_stream true
